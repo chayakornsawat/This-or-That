@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>This or That</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 0; padding: 0; }
+        .nav { background-color: #0078d4; color: white; padding: 10px 20px; font-size: 20px; display: flex; justify-content: space-between; }
+        .image-container { display: flex; justify-content: center; gap: 40px; margin-top: 50px; }
+        .image-box { width: 150px; height: 150px; background-color: lightgray; border-radius: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; background-size: cover; background-position: center; }
+        .bottom-controls { display: flex; justify-content: space-between; width: 300px; margin: 30px auto; }
+        .upload-icon, .compare { font-size: 16px; cursor: pointer; }
+        .result { margin-top: 20px; font-size: 16px; }
+        .result-box { background: #f3f3f3; padding: 10px; border-radius: 5px; text-align: left; display: inline-block; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <span><strong>This or That</strong></span>
+        <span><strong>Home</strong></span>
+    </div>
+
+    <div class="image-container">
+        <div class="image-box" id="box1" onclick="uploadImage(1)">+</div>
+        <div class="image-box" id="box2" onclick="uploadImage(2)">+</div>
+    </div>
+
+    <div class="bottom-controls">
+        <span class="compare" onclick="compareImages()">Compare</span>
+        <span class="upload-icon" onclick="uploadImage(1)">⬆</span>
+        <span class="upload-icon" onclick="uploadImage(2)">⬆</span>
+    </div>
+
+    <input type="file" id="fileInput1" style="display:none" onchange="previewImage(1)">
+    <input type="file" id="fileInput2" style="display:none" onchange="previewImage(2)">
+
+    <div class="result" id="resultText"></div>
+
+    <script>
+        let image1 = null, image2 = null;
+
+        function uploadImage(slot) {
+            document.getElementById(`fileInput${slot}`).click();
+        }
+
+        function previewImage(slot) {
+            const file = document.getElementById(`fileInput${slot}`).files[0];
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                document.getElementById(`box${slot}`).style.backgroundImage = `url(${e.target.result})`;
+                document.getElementById(`box${slot}`).textContent = "";
+                
+                if (slot === 1) image1 = e.target.result;
+                if (slot === 2) image2 = e.target.result;
+            };
+
+            if (file) {
+                reader.readAsDataURL(file);
+            }
+        }
+
+        async function compareImages() {
+            if (!image1 || !image2) {
+                alert("Please upload both images before comparing!");
+                return;
+            }
+
+            document.getElementById("resultText").innerHTML = "Comparing...";
+
+            try {
+                const response = await fetch("/api/compare", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ image1, image2 })
+                });
+
+                const result = await response.json();
+
+                if (result.error) {
+                    document.getElementById("resultText").innerHTML = "Comparison failed!";
+                    return;
+                }
+
+                document.getElementById("resultText").innerHTML = `
+                    <div class="result-box">
+                        <strong>Product 1:</strong><br>
+                        Name: ${result.comparison[0].name}<br>
+                        Price: $${result.comparison[0].price}<br>
+                        Discount: ${result.comparison[0].discount}%<br>
+                        Brand: ${result.comparison[0].brand}<br>
+                        Features: <ul>${result.comparison[0].key_features.map(f => `<li>${f}</li>`).join("")}</ul>
+                    </div>
+                    <div class="result-box">
+                        <strong>Product 2:</strong><br>
+                        Name: ${result.comparison[1].name}<br>
+                        Price: $${result.comparison[1].price}<br>
+                        Discount: ${result.comparison[1].discount}%<br>
+                        Brand: ${result.comparison[1].brand}<br>
+                        Features: <ul>${result.comparison[1].key_features.map(f => `<li>${f}</li>`).join("")}</ul>
+                    </div>
+                `;
+            } catch (error) {
+                console.error("Error:", error);
+                document.getElementById("resultText").innerHTML = "Comparison failed!";
+            }
+        }
+    </script>
+</body>
+</html>

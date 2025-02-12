@@ -1,0 +1,85 @@
+<script>
+    // Placeholder functions for future features
+    function compareImages() {
+        alert("Compare feature not implemented yet!");
+    }
+
+    function uploadImage(slot) {
+        alert(`Upload image for slot ${slot}`);
+    }
+</script>
+
+<style>
+    .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        font-family: Arial, sans-serif;
+    }
+
+    .nav {
+        width: 100%;
+        background-color: #0078d4;
+        color: white;
+        padding: 10px 20px;
+        font-size: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .image-container {
+        display: flex;
+        justify-content: center;
+        gap: 40px;
+        margin-top: 50px;
+    }
+
+    .image-box {
+        width: 150px;
+        height: 150px;
+        background-color: lightgray;
+        border-radius: 10px;
+    }
+
+    .bottom-controls {
+        display: flex;
+        justify-content: space-between;
+        width: 300px;
+        margin-top: 30px;
+    }
+
+    .upload-icon, .compare {
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    .upload-icon {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+</style>
+
+<div class="container">
+    <!-- Navbar -->
+    <div class="nav">
+        <span><strong>This or That</strong></span>
+        <span><strong>Home</strong></span>
+    </div>
+
+    <!-- Image Comparison Section -->
+    <div class="image-container">
+        <div class="image-box"></div>
+        <div class="image-box"></div>
+    </div>
+
+    <!-- Bottom Controls -->
+    <div class="bottom-controls">
+        <span class="compare" on:click={compareImages}><strong>compare</strong></span>
+        <span class="upload-icon" on:click={() => uploadImage(1)}>⬆</span>
+        <span class="upload-icon" on:click={() => uploadImage(2)}>⬆</span>
+    </div>
+</div>

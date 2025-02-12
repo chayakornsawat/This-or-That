@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>This or That</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+        .nav {
+            background-color: #0078d4;
+            color: white;
+            padding: 10px 20px;
+            font-size: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .image-container {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 50px;
+        }
+        .image-box {
+            width: 150px;
+            height: 150px;
+            background-color: lightgray;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        .bottom-controls {
+            display: flex;
+            justify-content: space-between;
+            width: 300px;
+            margin: 30px auto;
+        }
+        .upload-icon, .compare {
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <span><strong>This or That</strong></span>
+        <span><strong>Home</strong></span>
+    </div>
+
+    <div class="image-container">
+        <div class="image-box" id="box1" onclick="uploadImage(1)">+</div>
+        <div class="image-box" id="box2" onclick="uploadImage(2)">+</div>
+    </div>
+
+    <div class="bottom-controls">
+        <span class="compare" onclick="compareImages()">Compare</span>
+        <span class="upload-icon" onclick="uploadImage(1)">⬆</span>
+        <span class="upload-icon" onclick="uploadImage(2)">⬆</span>
+    </div>
+
+    <input type="file" id="fileInput1" style="display:none" onchange="previewImage(1)">
+    <input type="file" id="fileInput2" style="display:none" onchange="previewImage(2)">
+
+    <script>
+        function compareImages() {
+            alert("Compare feature not implemented yet!");
+        }
+
+        function uploadImage(slot) {
+            document.getElementById(`fileInput${slot}`).click();
+        }
+
+        function previewImage(slot) {
+            const file = document.getElementById(`fileInput${slot}`).files[0];
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                document.getElementById(`box${slot}`).style.backgroundImage = `url(${e.target.result})`;
+                document.getElementById(`box${slot}`).style.backgroundSize = "cover";
+                document.getElementById(`box${slot}`).textContent = ""; 
+            };
+
+            if (file) {
+                reader.readAsDataURL(file);
+            }
+        }
+    </script>
+</body>
+</html>
